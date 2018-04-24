@@ -1,39 +1,22 @@
 package jeu;
 
-
-/**
- * <!-- begin-user-doc -->
- * <!--  end-user-doc  -->
- * @generated
- */
-
-public class Zone
-{
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!--  end-user-doc  -->
-	 * @generated
-	 * @ordered
-	 */
-	
+public class Zone {
 	public ZoneState state;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!--  end-user-doc  -->
-	 * @generated
-	 * @ordered
-	 */
-	
+	public int counter = 0;
+	public String name;
 	public IslandModel model;
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!--  end-user-doc  -->
-	 * @generated
-	 */
 	public Zone(){
 		super();
+		this.state = ZoneState.DRY;
+	}
+
+	public IslandModel getIsland(){ return this.model; }
+	public String getName(){ return this.name; }
+	public String toString(){ return ""; }
+	
+	public void wet() {
+		return;
 	}
 
 }
