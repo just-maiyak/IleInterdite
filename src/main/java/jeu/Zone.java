@@ -2,15 +2,17 @@ package jeu;
 
 public class Zone {
 	private ZoneState state;
-	private int counter = 0;
-	private String name = "Default";
+	private Artefact artefact;
+	private String name;
 	private IslandModel model;
 
-	public Zone(IslandModel model){
+	public Zone(IslandModel model, Artefact a){
 		super();
 		this.state = ZoneState.DRY;
 		this.name = this.state.name();
 		this.model = model;
+
+		this.artefact = a;
 	}
 
 	protected ZoneState floodSelf(){
@@ -25,12 +27,29 @@ public class Zone {
         this.name = this.state.name();
         return this.state;
 	}
-
+	protected void drySelf(){
+	    this.state = ZoneState.DRY;
+	    this.name = this.state.name();
+    }
+    protected Artefact giveArtefact(){
+        // The game is supposed to be over if an artefact is submerged
+        // we're checking just in case
+	    assert (this.state != ZoneState.SUBMERGED) : "Zone is submerged, the game is over.";
+	    Artefact a = this.artefact;
+        this.artefact = Artefact.NONE;
+        return a;
+    }
+    protected void placeArtefact(Artefact a){
+	    this.artefact = a;
+    }
 
 	public IslandModel getIsland(){ return this.model; }
 	public String getName(){ return this.name; }
-	public ZoneState getState() { return state; }
-	public String toString(){ return this.name + "(" + this.counter + ")"; }
+    public Artefact getArtefact() {
+        return artefact;
+    }
+    public ZoneState getState() { return state; }
+	public String toString(){ return this.name ; }
 
 }
 

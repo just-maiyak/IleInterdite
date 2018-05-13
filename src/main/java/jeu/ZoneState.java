@@ -2,5 +2,5 @@ package jeu;
 
 public enum ZoneState
 {
-	DRY, WET, SUBMERGED;
+	DRY, WET, SUBMERGED, UNKNOWN
 }

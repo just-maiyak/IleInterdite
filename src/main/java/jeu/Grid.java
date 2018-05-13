@@ -9,8 +9,10 @@ import java.util.Observer;
 public class Grid extends JPanel implements Observer
 {
 
-    public IslandView superView;
-	public static final int CELL_SIZE = 30;
+    private IslandView superView;
+	private static final int CELL_SIZE = 30;
+	private static final int PLAYER_SIZE = 26;
+	private static final int PLAYER_BORDER = (CELL_SIZE - PLAYER_SIZE) / 2;
 
     public Grid(IslandView view){
 		super();
@@ -20,34 +22,34 @@ public class Grid extends JPanel implements Observer
 		this.setPreferredSize(new Dimension(CELL_SIZE*IslandModel.WIDTH, CELL_SIZE*IslandModel.HEIGHT));
 	}
 
-    private void paint(Graphics g, int x, int y, ZoneState state){
-        switch (state) {
-            case DRY:
-                g.setColor(Color.white);
-                break;
-            case WET:
-                g.setColor(new Color(90, 140, 190));
-                break;
-            case SUBMERGED:
-                g.setColor(new Color(30, 30, 50));
-                break;
-        }
-        g.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+    private void paint(Graphics g, int x, int y, Color color, int size){
+        g.setColor(color);
+        g.fillRect(x, y, size, size);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.repaint();
+        // Ground drawing
         for (int i = 0; i < IslandModel.HEIGHT; i++) {
             for (int j = 0; j < IslandModel.WIDTH; j++) {
-                ZoneState currentState = this.superView.model.getState(i, j);
                 this.paint( g,
-                        (j) * CELL_SIZE,
-                        (i) * CELL_SIZE,
-                        currentState);
+                        j * CELL_SIZE,
+                        i * CELL_SIZE,
+                        this.superView.model.getGroundColorAtPos(i, j),
+                        CELL_SIZE);
             }
         }
+        for (Player p : this.superView.model.getPlayers()){
+            Color color = (p == this.superView.model.getCurrentPlayer()) ? Color.red : new Color(130, 36, 36) ;
+            this.paint(g,
+                    p.getxPos() * CELL_SIZE + PLAYER_BORDER,
+                    p.getyPos() * CELL_SIZE + PLAYER_BORDER,
+                    color,
+                    PLAYER_SIZE);
+        }
     }
+
 
     @Override
     public void update(Observable o, Object arg) {

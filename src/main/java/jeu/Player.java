@@ -1,5 +1,6 @@
 package jeu;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Player {
@@ -7,6 +8,8 @@ public class Player {
     private IslandModel model;
     private String name;
     private int xPos, yPos;
+    private int actions = 3;
+    private ArrayList<Key> keychain;
 
     private class PositionOutOfBoundsException extends IndexOutOfBoundsException {
         PositionOutOfBoundsException(Direction d){
@@ -22,49 +25,139 @@ public class Player {
        this.name = scanner.next();
        System.out.println("Cool name, " + this.name + " !");
 
-       this.xPos = this.yPos = 0;
+       this.xPos = 0;
+       this.yPos = IslandModel.HEIGHT - 1;
+
+       this.keychain = new ArrayList<>();
 
     }
 
     protected void move(Direction d) {
 
-        checkDirection(d);
+        if (this.checkActionCount() || this.checkDirection(d) == ZoneState.SUBMERGED) return;
+
         switch (d) {
             case NORTH:
-                this.xPos++;
-                break;
-            case EAST:
-                this.yPos++;
-                break;
-            case WEST:
                 this.yPos--;
                 break;
-            case SOUTH:
+            case EAST:
+                this.xPos++;
+                break;
+            case WEST:
                 this.xPos--;
                 break;
+            case SOUTH:
+                this.yPos++;
+                break;
         }
+        this.actions--;
+
         System.out.println(this);
     }
 
-    private void checkDirection(Direction d){
+    protected void dry(Direction d){
+
+        // CHeck if the player still has enough actions to play
+        ZoneState zs = this.checkDirection(d);
+        if (this.actions == 0 || !(zs == ZoneState.WET)) return;
+
+        //Passing the right position to the IslandModel.dryZone() function
         switch (d) {
             case NORTH:
-                if (this.xPos + 1 > IslandModel.HEIGHT) throw new PositionOutOfBoundsException(d);
+                this.model.dryZone(this.xPos, this.yPos - 1);
                 break;
             case EAST:
-                if (this.yPos + 1 > IslandModel.WIDTH) throw new PositionOutOfBoundsException(d);
+                this.model.dryZone(this.xPos + 1, this.yPos);
                 break;
             case WEST:
-                if (this.yPos - 1 < 0) throw new PositionOutOfBoundsException(d);
+                this.model.dryZone(this.xPos - 1, this.yPos);
                 break;
             case SOUTH:
-                if (this.xPos - 1 < 0) throw new PositionOutOfBoundsException(d);
+                this.model.dryZone(this.xPos, this.yPos + 1);
                 break;
+            case NONE:
+                this.model.dryZone(this.xPos, this.yPos);
+                break;
+        }
+
+        //Update actions count
+        this.actions--;
+        System.out.println(this);
+    }
+
+    protected void snatchArtefact(){
+        Artefact a = this.model.checkForArtefacts(xPos, yPos);
+        Key k = this.artefactToKey(a);
+        if (a != Artefact.NONE && this.keychain.contains(k)){
+            this.model.fetchArtefact(xPos, yPos);
+            this.actions--;
         }
     }
 
+    private Key artefactToKey(Artefact a){
+        switch (a) {
+            case A_AIR:
+                return Key.K_AIR;
+            case A_FIRE:
+                return Key.K_FIRE;
+            case A_WATER:
+                return Key.K_WATER;
+            case A_GROUND:
+                return Key.K_GROUND;
+            default:
+                return null;
+        }
+    }
+
+    protected void resetActions(){
+        this.actions = 3;
+    }
+
+    protected void addKey(Key k){
+        this.keychain.add(k);
+    }
+
+    public int getxPos() {
+        return xPos;
+    }
+
+    public int getyPos() {
+        return yPos;
+    }
+
+    protected ZoneState checkDirection(Direction d){
+        ZoneState dZoneState = ZoneState.UNKNOWN;
+        switch (d) {
+            case NORTH:
+                if (this.yPos - 1 < 0) throw new PositionOutOfBoundsException(d);
+                dZoneState = this.model.getStateAtPos(this.yPos - 1, this.xPos);
+                break;
+            case EAST:
+                if (this.xPos + 1 > IslandModel.WIDTH) throw new PositionOutOfBoundsException(d);
+                dZoneState = this.model.getStateAtPos(this.yPos, this.xPos + 1);
+                break;
+            case WEST:
+                if (this.xPos - 1 < 0) throw new PositionOutOfBoundsException(d);
+                dZoneState = this.model.getStateAtPos(this.yPos, this.xPos - 1);
+                break;
+            case SOUTH:
+                if (this.yPos + 1 > IslandModel.HEIGHT) throw new PositionOutOfBoundsException(d);
+                dZoneState = this.model.getStateAtPos(this.yPos + 1, this.xPos);
+                break;
+            case NONE:
+                dZoneState = this.model.getStateAtPos(this.yPos, this.xPos);
+                break;
+        }
+        return dZoneState;
+    }
+
+    protected boolean checkActionCount(){
+        return this.actions == 0;
+    }
+
     public String toString(){
-        return this.name + " @ (" + this.xPos + ", " + this.yPos + ")";
+        return this.name + " @ (" + this.xPos + ", " + this.yPos + ") " + " | Actions left : " + this.actions
+                + "\nKeys : " + this.keychain;
     }
 
 }

@@ -2,5 +2,5 @@ package jeu;
 
 public enum Direction
 {
-    NORTH, EAST, WEST, SOUTH
+    NORTH, EAST, WEST, SOUTH, NONE
 }

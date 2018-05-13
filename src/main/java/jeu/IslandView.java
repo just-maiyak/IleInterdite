@@ -17,31 +17,79 @@ public class IslandView
     protected class Controller extends JPanel {
 
         private IslandView superView;
+        private JButton moveUp, moveDown, moveRight, moveLeft;
+        private JButton dryUp, dryDown, dryLeft, dryRight;
 
     	public Controller(IslandView superView){
     	    this.superView = superView;
 
     	    //Movements
-    	    JButton up = new JButton("Up");
-    	    up.addActionListener(e -> model.currentPlayer.move(Direction.NORTH));
-    	    this.add(up);
+    	    this.moveUp = new JButton("Up");
+    	    moveUp.addActionListener(e -> {
+                model.getCurrentPlayer().move(Direction.NORTH);
+                if (model.getCurrentPlayer().checkActionCount()) disableMovements();
+            });
+    	    this.add(moveUp);
 
-            JButton down = new JButton("Down");
-            down.addActionListener(e -> model.currentPlayer.move(Direction.SOUTH));
-            this.add(down);
+            this.moveDown = new JButton("Down");
+            moveDown.addActionListener(e -> {
+                model.getCurrentPlayer().move(Direction.SOUTH);
+                if (model.getCurrentPlayer().checkActionCount()) disableMovements();
+            });
+            this.add(moveDown);
 
-            JButton left = new JButton("Left");
-            left.addActionListener(e -> model.currentPlayer.move(Direction.WEST));
-            this.add(left);
+            this.moveLeft = new JButton("Left");
+            moveLeft.addActionListener(e -> {
+                model.getCurrentPlayer().move(Direction.WEST);
+                if (model.getCurrentPlayer().checkActionCount()) disableMovements();
+            });
+            this.add(moveLeft);
 
-            JButton right = new JButton("Right");
-            right.addActionListener(e -> model.currentPlayer.move(Direction.EAST));
-            this.add(right);
+            this.moveRight = new JButton("Right");
+            moveRight.addActionListener(e -> {
+                model.getCurrentPlayer().move(Direction.EAST);
+                if (model.getCurrentPlayer().checkActionCount()) disableMovements();
+            });
+            this.add(moveRight);
+
+
+            this.dryUp = new JButton("Dry Up");
+            dryUp.addActionListener(e -> { model.getCurrentPlayer().dry(Direction.NORTH); });
+            this.add(dryUp);
+
+            this.dryDown = new JButton("Dry Down");
+            dryDown.addActionListener(e -> { model.getCurrentPlayer().dry(Direction.SOUTH); });
+            this.add(dryDown);
+
+            this.dryLeft = new JButton("Dry Left");
+            dryLeft.addActionListener(e -> { model.getCurrentPlayer().dry(Direction.WEST); });
+            this.add(dryLeft);
+
+            this.dryRight = new JButton("Dry Right");
+            dryRight.addActionListener(e -> { model.getCurrentPlayer().dry(Direction.EAST); });
+            this.add(dryRight);
+
+            JButton art = new JButton("Artefact");
+            art.addActionListener(e -> model.getCurrentPlayer().snatchArtefact());
+            this.add(art);
 
             //End of round
             JButton end = new JButton("End of round");
-            end.addActionListener(e -> model.endRound());
+            end.addActionListener(e -> {
+                model.endRound();
+                this.moveDown.setEnabled(true);
+                this.moveUp.setEnabled(true);
+                this.moveRight.setEnabled(true);
+                this.moveLeft.setEnabled(true);
+            });
             this.add(end);
+        }
+
+        protected void disableMovements(){
+    	    this.moveLeft.setEnabled(false);
+    	    this.moveRight.setEnabled(false);
+    	    this.moveUp.setEnabled(false);
+    	    this.moveDown.setEnabled(false);
         }
 	}
 	private Controller controller;
