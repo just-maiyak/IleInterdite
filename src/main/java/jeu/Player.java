@@ -165,7 +165,7 @@ public class Player extends Observable{
     }
 
     protected boolean checkActionCount(){
-        return this.actions == 0;
+        return this.actions < 1;
     }
 
     public String getName() {

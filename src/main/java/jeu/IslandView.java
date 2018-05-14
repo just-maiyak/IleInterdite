@@ -35,54 +35,54 @@ public class IslandView
 
     	    //Movements
     	    this.moveUp = new JButton("Up");
-    	    moveUp.addActionListener(e -> model.getCurrentPlayer().move(Direction.NORTH));
             this.moveUp.addActionListener(checkEnable);
+    	    moveUp.addActionListener(e -> model.getCurrentPlayer().move(Direction.NORTH));
     	    this.add(moveUp);
 
             this.moveDown = new JButton("Down");
-            moveDown.addActionListener(e -> model.getCurrentPlayer().move(Direction.SOUTH));
             this.moveDown.addActionListener(checkEnable);
+            moveDown.addActionListener(e -> model.getCurrentPlayer().move(Direction.SOUTH));
             this.add(moveDown);
 
             this.moveLeft = new JButton("Left");
-            moveLeft.addActionListener(e -> model.getCurrentPlayer().move(Direction.WEST));
             this.moveLeft.addActionListener(checkEnable);
+            moveLeft.addActionListener(e -> model.getCurrentPlayer().move(Direction.WEST));
             this.add(moveLeft);
 
             this.moveRight = new JButton("Right");
-            moveRight.addActionListener(e -> model.getCurrentPlayer().move(Direction.EAST));
             this.moveRight.addActionListener(checkEnable);
+            moveRight.addActionListener(e -> model.getCurrentPlayer().move(Direction.EAST));
             this.add(moveRight);
 
 
             this.dryUp = new JButton("Dry Up");
-            dryUp.addActionListener(e -> model.getCurrentPlayer().dry(Direction.NORTH));
             this.dryUp.addActionListener(checkEnable);
+            dryUp.addActionListener(e -> model.getCurrentPlayer().dry(Direction.NORTH));
             this.add(dryUp);
 
             this.dryDown = new JButton("Dry Down");
-            dryDown.addActionListener(e -> model.getCurrentPlayer().dry(Direction.SOUTH));
             this.dryDown.addActionListener(checkEnable);
+            dryDown.addActionListener(e -> model.getCurrentPlayer().dry(Direction.SOUTH));
             this.add(dryDown);
 
             this.dryLeft = new JButton("Dry Left");
-            dryLeft.addActionListener(e -> model.getCurrentPlayer().dry(Direction.WEST));
             this.dryLeft.addActionListener(checkEnable);
+            dryLeft.addActionListener(e -> model.getCurrentPlayer().dry(Direction.WEST));
             this.add(dryLeft);
 
             this.dryRight = new JButton("Dry Right");
-            dryRight.addActionListener(e -> model.getCurrentPlayer().dry(Direction.EAST));
             this.dryRight.addActionListener(checkEnable);
+            dryRight.addActionListener(e -> model.getCurrentPlayer().dry(Direction.EAST));
             this.add(dryRight);
 
             this.dryHere = new JButton("Dry Here");
-            dryHere.addActionListener(e -> model.getCurrentPlayer().dry(Direction.NONE));
             this.dryHere.addActionListener(checkEnable);
+            dryHere.addActionListener(e -> model.getCurrentPlayer().dry(Direction.NONE));
             this.add(dryHere);
 
             this.art = new JButton("Artefact");
-            art.addActionListener(e -> model.getCurrentPlayer().snatchArtefact());
             this.art.addActionListener(checkEnable);
+            art.addActionListener(e -> model.getCurrentPlayer().snatchArtefact());
             this.add(art);
 
             //End of round
@@ -219,8 +219,5 @@ public class IslandView
 	    this.mainWindow.setVisible(gui);
 	}
 
-    public Controller getController() {
-        return controller;
-    }
 }
 
