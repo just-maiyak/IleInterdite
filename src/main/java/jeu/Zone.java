@@ -5,6 +5,7 @@ public class Zone {
 	private Artefact artefact;
 	private String name;
 	private IslandModel model;
+	private boolean heliport = false;
 
 	public Zone(IslandModel model, Artefact a){
 		super();
@@ -42,6 +43,12 @@ public class Zone {
     protected void placeArtefact(Artefact a){
 	    this.artefact = a;
     }
+    protected void placeHeliport(){
+	    this.heliport = true;
+    }
+    protected boolean isHeliport(){
+	    return this.heliport;
+    }
 
 	public IslandModel getIsland(){ return this.model; }
 	public String getName(){ return this.name; }
@@ -49,7 +56,9 @@ public class Zone {
         return artefact;
     }
     public ZoneState getState() { return state; }
-	public String toString(){ return this.name + " " + ((this.artefact != Artefact.NONE) ? this.artefact.name() : "") ; }
+	public String toString(){ return this.name + " "
+            + ((this.artefact != Artefact.NONE) ? this.artefact.name() : "")
+            + ((this.heliport) ? "Heliport" : "") ; }
 
 }
 

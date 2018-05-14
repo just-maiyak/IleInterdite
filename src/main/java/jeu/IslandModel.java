@@ -57,9 +57,13 @@ public class IslandModel extends Observable {
 		    zone.placeArtefact(a);
 		    zoneSelector.remove(zone);
         }
+        Zone heliport = zoneSelector.get(randGen.nextInt(zoneSelector.size()));
+		heliport.placeHeliport();
         //(cleanup for the JVM not to retain usable memory)
         artefacts.clear();
 		zoneSelector.clear();
+
+
 
 	    // ... so we can then create the interface
 		this.view = new IslandView("Ile Interdite", this, gui);
@@ -144,7 +148,9 @@ public class IslandModel extends Observable {
         }
         for (int i = 0; i < HEIGHT; i++) {
             for (int j = 0; j < WIDTH; j++) {
-                if (this.ground[i][j].getArtefact() != Artefact.NONE && this.getStateAtPos(i, j) == ZoneState.SUBMERGED){
+                if ((this.ground[i][j].getArtefact() != Artefact.NONE
+                        || this.ground[i][j].isHeliport())
+                        && this.getStateAtPos(i, j) == ZoneState.SUBMERGED){
                     return true;
                 }
             }
@@ -157,7 +163,7 @@ public class IslandModel extends Observable {
 
         switch (this.ground[line][col].getState()) {
             case DRY:
-                color = Color.white;
+                color = new Color(255, 248, 196);
                 break;
             case WET:
                 color = new Color(90, 140, 190);
@@ -195,6 +201,10 @@ public class IslandModel extends Observable {
 
     protected ZoneState getStateAtPos(int line, int col){
 	    return this.ground[line][col].getState();
+    }
+
+    protected boolean isZoneHeliport(int x, int y){
+	    return this.ground[x][y].isHeliport();
     }
 
     private void nextPlayer(){

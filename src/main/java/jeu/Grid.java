@@ -42,24 +42,33 @@ public class Grid extends JPanel implements Observer
                 if (artColor != Color.GRAY){
                     g.setColor(artColor);
                     g.fillOval(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                } else if (this.superView.model.isZoneHeliport(i, j)){
+                    g.setColor(Color.BLACK);
+                    g.drawString("H", j * CELL_SIZE + CELL_SIZE / 2,i * CELL_SIZE + CELL_SIZE / 2);
                 }
             }
         }
 
         for (Player p : this.superView.model.getPlayers()){
 
+            int x = p.getxPos(), y = p.getyPos();
             this.paint(g,
-                    p.getxPos() * CELL_SIZE + PLAYER_BORDER,
-                    p.getyPos() * CELL_SIZE + PLAYER_BORDER,
+                    x * CELL_SIZE + PLAYER_BORDER,
+                    y * CELL_SIZE + PLAYER_BORDER,
                     new Color(130, 36, 36),
                     PLAYER_SIZE);
+            g.setColor(Color.WHITE);
+            g.drawString(p.getName().substring(0, 1), x * CELL_SIZE + CELL_SIZE/2, y * CELL_SIZE + CELL_SIZE / 2);
         }
         Player p = this.superView.model.getCurrentPlayer();
+        int x = p.getxPos(), y = p.getyPos();
         this.paint(g,
                 p.getxPos() * CELL_SIZE + PLAYER_BORDER,
                 p.getyPos() * CELL_SIZE + PLAYER_BORDER,
                 Color.RED,
                 PLAYER_SIZE);
+        g.setColor(Color.WHITE);
+        g.drawString(p.getName().substring(0, 1), x * CELL_SIZE + CELL_SIZE/2, y * CELL_SIZE + CELL_SIZE / 2);
     }
 
 

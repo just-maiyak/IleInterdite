@@ -20,7 +20,7 @@ public class Player extends Observable{
     public Player(IslandModel m){
        this.model = m;
 
-       this.name = "";
+       this.name = "  ";
 
        this.xPos = IslandModel.randGen.nextInt(IslandModel.WIDTH);
        this.yPos = IslandModel.randGen.nextInt(IslandModel.HEIGHT - 1);
