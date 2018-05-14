@@ -136,15 +136,17 @@ public class IslandModel extends Observable {
         }
     }
 
-    private boolean gameover(){
+    protected boolean gameover(){
 	    for (Player p : this.players){
-	        if (this.ground[p.getyPos()][p.getxPos()].getState() == ZoneState.SUBMERGED)
-	            return true;
+	        if (this.ground[p.getyPos()][p.getxPos()].getState() == ZoneState.SUBMERGED) {
+                return true;
+            }
         }
         for (int i = 0; i < HEIGHT; i++) {
             for (int j = 0; j < WIDTH; j++) {
-                if (this.ground[i][j].getArtefact() != Artefact.NONE && this.getStateAtPos(i, j) == ZoneState.SUBMERGED)
+                if (this.ground[i][j].getArtefact() != Artefact.NONE && this.getStateAtPos(i, j) == ZoneState.SUBMERGED){
                     return true;
+                }
             }
         }
         return false;

@@ -3,6 +3,7 @@ package jeu;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -21,76 +22,80 @@ public class IslandView
         private IslandView superView;
         private JButton moveUp, moveDown, moveRight, moveLeft;
         private JButton dryUp, dryDown, dryLeft, dryRight, dryHere;
+        private JButton art;
 
     	public Controller(IslandView superView){
     	    this.superView = superView;
 
     	    this.setLayout(new GridLayout(0, 4));
 
+            ActionListener checkEnable = e -> {
+                if (model.getCurrentPlayer().checkActionCount()) disableActions();
+            };
+
     	    //Movements
     	    this.moveUp = new JButton("Up");
-    	    moveUp.addActionListener(e -> {
-                model.getCurrentPlayer().move(Direction.NORTH);
-                if (model.getCurrentPlayer().checkActionCount()) disableActions();
-            });
+    	    moveUp.addActionListener(e -> model.getCurrentPlayer().move(Direction.NORTH));
+            this.moveUp.addActionListener(checkEnable);
     	    this.add(moveUp);
 
             this.moveDown = new JButton("Down");
-            moveDown.addActionListener(e -> {
-                model.getCurrentPlayer().move(Direction.SOUTH);
-                if (model.getCurrentPlayer().checkActionCount()) disableActions();
-            });
+            moveDown.addActionListener(e -> model.getCurrentPlayer().move(Direction.SOUTH));
+            this.moveDown.addActionListener(checkEnable);
             this.add(moveDown);
 
             this.moveLeft = new JButton("Left");
-            moveLeft.addActionListener(e -> {
-                model.getCurrentPlayer().move(Direction.WEST);
-                if (model.getCurrentPlayer().checkActionCount()) disableActions();
-            });
+            moveLeft.addActionListener(e -> model.getCurrentPlayer().move(Direction.WEST));
+            this.moveLeft.addActionListener(checkEnable);
             this.add(moveLeft);
 
             this.moveRight = new JButton("Right");
-            moveRight.addActionListener(e -> {
-                model.getCurrentPlayer().move(Direction.EAST);
-                if (model.getCurrentPlayer().checkActionCount()) disableActions();
-            });
+            moveRight.addActionListener(e -> model.getCurrentPlayer().move(Direction.EAST));
+            this.moveRight.addActionListener(checkEnable);
             this.add(moveRight);
 
 
             this.dryUp = new JButton("Dry Up");
-            dryUp.addActionListener(e -> { model.getCurrentPlayer().dry(Direction.NORTH); });
+            dryUp.addActionListener(e -> model.getCurrentPlayer().dry(Direction.NORTH));
+            this.dryUp.addActionListener(checkEnable);
             this.add(dryUp);
 
             this.dryDown = new JButton("Dry Down");
-            dryDown.addActionListener(e -> { model.getCurrentPlayer().dry(Direction.SOUTH); });
+            dryDown.addActionListener(e -> model.getCurrentPlayer().dry(Direction.SOUTH));
+            this.dryDown.addActionListener(checkEnable);
             this.add(dryDown);
 
             this.dryLeft = new JButton("Dry Left");
-            dryLeft.addActionListener(e -> { model.getCurrentPlayer().dry(Direction.WEST); });
+            dryLeft.addActionListener(e -> model.getCurrentPlayer().dry(Direction.WEST));
+            this.dryLeft.addActionListener(checkEnable);
             this.add(dryLeft);
 
             this.dryRight = new JButton("Dry Right");
-            dryRight.addActionListener(e -> { model.getCurrentPlayer().dry(Direction.EAST); });
+            dryRight.addActionListener(e -> model.getCurrentPlayer().dry(Direction.EAST));
+            this.dryRight.addActionListener(checkEnable);
             this.add(dryRight);
 
             this.dryHere = new JButton("Dry Here");
-            dryHere.addActionListener(e -> { model.getCurrentPlayer().dry(Direction.NONE); });
+            dryHere.addActionListener(e -> model.getCurrentPlayer().dry(Direction.NONE));
+            this.dryHere.addActionListener(checkEnable);
             this.add(dryHere);
 
-            JButton art = new JButton("Artefact");
+            this.art = new JButton("Artefact");
             art.addActionListener(e -> model.getCurrentPlayer().snatchArtefact());
+            this.art.addActionListener(checkEnable);
             this.add(art);
 
             //End of round
             JButton end = new JButton("End of round");
             end.addActionListener(e -> {
                 model.endRound();
-                enableActions();
+                if (!this.superView.model.gameover()) enableActions();
+                else disableActions();
             });
             this.add(end);
         }
 
-        protected void enableActions(){
+        void enableActions(){
             this.moveDown.setEnabled(true);
             this.moveUp.setEnabled(true);
             this.moveRight.setEnabled(true);
@@ -100,9 +105,10 @@ public class IslandView
             this.dryHere.setEnabled(true);
             this.dryLeft.setEnabled(true);
             this.dryRight.setEnabled(true);
+            this.art.setEnabled(true);
         }
 
-        protected void disableActions(){
+        void disableActions(){
     	    this.moveLeft.setEnabled(false);
     	    this.moveRight.setEnabled(false);
     	    this.moveUp.setEnabled(false);
@@ -112,6 +118,7 @@ public class IslandView
     	    this.dryHere.setEnabled(false);
     	    this.dryLeft.setEnabled(false);
     	    this.dryRight.setEnabled(false);
+    	    this.art.setEnabled(false);
         }
 	}
 	private Controller controller;
@@ -138,17 +145,25 @@ public class IslandView
             this.name = new JTextField(p.getName());
             this.name.addActionListener(e -> {
                 this.p.setName(this.name.getText());
+                KeyboardFocusManager fm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+                fm.getFocusOwner().transferFocus();
             });
 
             this.setLayout(new GridLayout(0, 2));
 
-            this.add(new JLabel("Name :"));
+            JLabel nameLabel = new JLabel("Name :");
+            nameLabel.setLabelFor(this.name);
+            this.add(nameLabel);
             this.add(this.name);
 
-            this.add(new JLabel("Actions left : "));
+            JLabel actionsLabel = new JLabel("Actions left : ");
+            actionsLabel.setLabelFor(this.actions);
+            this.add(actionsLabel);
             this.add(this.actions);
 
-            this.add(new JLabel("Keys : "));
+            JLabel keysLabel = new JLabel("Keys : ");
+            keysLabel.setLabelFor(this.keys);
+            this.add(keysLabel);
             this.add(this.keys);
         }
 
@@ -204,5 +219,8 @@ public class IslandView
 	    this.mainWindow.setVisible(gui);
 	}
 
+    public Controller getController() {
+        return controller;
+    }
 }
 
