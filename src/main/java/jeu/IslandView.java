@@ -89,7 +89,7 @@ public class IslandView
             JButton end = new JButton("End of round");
             end.addActionListener(e -> {
                 model.endRound();
-                if (!this.superView.model.gameover()) enableActions();
+                if (!this.superView.model.gameover() || !this.superView.model.won()) enableActions();
                 else disableActions();
             });
             this.add(end);

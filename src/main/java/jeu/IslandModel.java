@@ -92,6 +92,8 @@ public class IslandModel extends Observable {
         System.out.println(this);
         if (this.gameover()){
             System.out.println("GAMEOVER");
+        } else if (this.won()) {
+            System.out.println("YOU WIN");
         }
     }
 
@@ -156,6 +158,15 @@ public class IslandModel extends Observable {
             }
         }
         return false;
+    }
+
+    protected boolean won(){
+	    boolean allPlayersAtHeliport = true;
+	    for (Player p : this.players){
+	        int x = p.getxPos(), y = p.getyPos();
+	        allPlayersAtHeliport = allPlayersAtHeliport && this.isZoneHeliport(x, y);
+        }
+	    return this.snatchedArtefacts == 0b1111 && allPlayersAtHeliport;
     }
 
     protected Color getGroundColorAtPos(int line, int col){

@@ -49,6 +49,7 @@ public class Grid extends JPanel implements Observer
             }
         }
 
+        //Draw players
         for (Player p : this.superView.model.getPlayers()){
 
             int x = p.getxPos(), y = p.getyPos();
@@ -60,6 +61,7 @@ public class Grid extends JPanel implements Observer
             g.setColor(Color.WHITE);
             g.drawString(p.getName().substring(0, 1), x * CELL_SIZE + CELL_SIZE/2, y * CELL_SIZE + CELL_SIZE / 2);
         }
+        //Draw current player
         Player p = this.superView.model.getCurrentPlayer();
         int x = p.getxPos(), y = p.getyPos();
         this.paint(g,
