@@ -49,7 +49,7 @@ public class Zone {
         return artefact;
     }
     public ZoneState getState() { return state; }
-	public String toString(){ return this.name ; }
+	public String toString(){ return this.name + " " + ((this.artefact != Artefact.NONE) ? this.artefact.name() : "") ; }
 
 }
 

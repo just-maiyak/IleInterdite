@@ -1,10 +1,7 @@
 package jeu;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Observable;
-import java.util.Random;
+import java.util.*;
 
 public class IslandModel extends Observable {
 
@@ -19,6 +16,7 @@ public class IslandModel extends Observable {
 
 	private ArrayList<Player> players;
 	private int currentPlayerIndex = 0;
+	protected Direction currentPlayerDirection;
     /** As Java encodes chars with 4 bits
      *  we can use that to model the artefacts players have acquired */
     private char snatchedArtefacts;
@@ -38,12 +36,14 @@ public class IslandModel extends Observable {
         this.currentPlayerIndex = 0;
 
 		//Initialising the zones first...
+        ArrayList<Zone> zoneSelector = new ArrayList<>();
         this.floodableZones = new ArrayList<>();
 		this.ground = new Zone[HEIGHT][WIDTH];
 		for (int i = 0; i < HEIGHT; i++){
 			for (int j = 0 ; j < WIDTH ; j++){
 				this.ground[i][j] = new Zone(this, Artefact.NONE);
 				this.floodableZones.add(this.ground[i][j]);
+				zoneSelector.add(this.ground[i][j]);
 			}
 		}
 
@@ -52,9 +52,10 @@ public class IslandModel extends Observable {
                 Artefact.A_FIRE,
                 Artefact.A_GROUND,
                 Artefact.A_WATER));
-		ArrayList<Zone> zoneSelector = new ArrayList<>(this.floodableZones);
 		for (Artefact a : artefacts){
-		    zoneSelector.get(randGen.nextInt(zoneSelector.size())).placeArtefact(a);
+		    Zone zone = zoneSelector.get(randGen.nextInt(zoneSelector.size()));
+		    zone.placeArtefact(a);
+		    zoneSelector.remove(zone);
         }
         //(cleanup for the JVM not to retain usable memory)
         artefacts.clear();
@@ -85,6 +86,9 @@ public class IslandModel extends Observable {
         //Notify obs.
         notifyObservers();
         System.out.println(this);
+        if (this.gameover()){
+            System.out.println("GAMEOVER");
+        }
     }
 
     protected void dryZone(int x, int y){
@@ -132,6 +136,20 @@ public class IslandModel extends Observable {
         }
     }
 
+    private boolean gameover(){
+	    for (Player p : this.players){
+	        if (this.ground[p.getyPos()][p.getxPos()].getState() == ZoneState.SUBMERGED)
+	            return true;
+        }
+        for (int i = 0; i < HEIGHT; i++) {
+            for (int j = 0; j < WIDTH; j++) {
+                if (this.ground[i][j].getArtefact() != Artefact.NONE && this.getStateAtPos(i, j) == ZoneState.SUBMERGED)
+                    return true;
+            }
+        }
+        return false;
+    }
+
     protected Color getGroundColorAtPos(int line, int col){
 	    Color color = Color.GRAY;
 
@@ -147,6 +165,25 @@ public class IslandModel extends Observable {
                 break;
         }
 
+        return color;
+    }
+
+    protected Color getArtefactColor(int line, int col){
+	    Color color = Color.GRAY;
+	    switch (this.ground[line][col].getArtefact()) {
+            case A_AIR:
+                color = new Color(98, 248, 255);
+                break;
+            case A_FIRE:
+                color = new Color(255, 100, 40);
+                break;
+            case A_WATER:
+                color = new Color(0, 123, 211);
+                break;
+            case A_GROUND:
+                color = new Color(131, 96, 77);
+                break;
+        }
         return color;
     }
 
@@ -181,7 +218,11 @@ public class IslandModel extends Observable {
 	}
 
 	public static void main(String... args){
-	    IslandModel model = new IslandModel(true, 2);
+        Scanner scan = new Scanner(System.in);
+        System.out.println("How many players do you wish to play with ?");
+        int nop = scan.nextInt();
+        System.out.println("All right. Let's go.");
+	    IslandModel model = new IslandModel(true, nop);
 	    System.out.println(model);
     }
 

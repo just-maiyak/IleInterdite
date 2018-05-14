@@ -1,9 +1,9 @@
 package jeu;
 
 import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.Observable;
 
-public class Player {
+public class Player extends Observable{
 
     private IslandModel model;
     private String name;
@@ -20,13 +20,10 @@ public class Player {
     public Player(IslandModel m){
        this.model = m;
 
-       Scanner scanner = new Scanner(System.in);
-       System.out.println("What's your name ?");
-       this.name = scanner.next();
-       System.out.println("Cool name, " + this.name + " !");
+       this.name = "";
 
-       this.xPos = 0;
-       this.yPos = IslandModel.HEIGHT - 1;
+       this.xPos = IslandModel.randGen.nextInt(IslandModel.WIDTH);
+       this.yPos = IslandModel.randGen.nextInt(IslandModel.HEIGHT - 1);
 
        this.keychain = new ArrayList<>();
 
@@ -52,6 +49,8 @@ public class Player {
         }
         this.actions--;
 
+        setChanged();
+        this.notifyObservers();
         System.out.println(this);
     }
 
@@ -82,6 +81,9 @@ public class Player {
 
         //Update actions count
         this.actions--;
+
+        setChanged();
+        notifyObservers();
         System.out.println(this);
     }
 
@@ -91,7 +93,14 @@ public class Player {
         if (a != Artefact.NONE && this.keychain.contains(k)){
             this.model.fetchArtefact(xPos, yPos);
             this.actions--;
+            setChanged();
+            notifyObservers();
         }
+        System.out.println(this);
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     private Key artefactToKey(Artefact a){
@@ -111,10 +120,14 @@ public class Player {
 
     protected void resetActions(){
         this.actions = 3;
+        setChanged();
+        notifyObservers();
     }
 
     protected void addKey(Key k){
         this.keychain.add(k);
+        setChanged();
+        notifyObservers();
     }
 
     public int getxPos() {
@@ -125,7 +138,7 @@ public class Player {
         return yPos;
     }
 
-    protected ZoneState checkDirection(Direction d){
+    private ZoneState checkDirection(Direction d){
         ZoneState dZoneState = ZoneState.UNKNOWN;
         switch (d) {
             case NORTH:
@@ -153,6 +166,18 @@ public class Player {
 
     protected boolean checkActionCount(){
         return this.actions == 0;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getActions() {
+        return actions;
+    }
+
+    public ArrayList<Key> getKeychain() {
+        return keychain;
     }
 
     public String toString(){

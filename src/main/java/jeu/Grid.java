@@ -38,16 +38,28 @@ public class Grid extends JPanel implements Observer
                         i * CELL_SIZE,
                         this.superView.model.getGroundColorAtPos(i, j),
                         CELL_SIZE);
+                Color artColor = this.superView.model.getArtefactColor(i, j);
+                if (artColor != Color.GRAY){
+                    g.setColor(artColor);
+                    g.fillOval(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                }
             }
         }
+
         for (Player p : this.superView.model.getPlayers()){
-            Color color = (p == this.superView.model.getCurrentPlayer()) ? Color.red : new Color(130, 36, 36) ;
+
             this.paint(g,
                     p.getxPos() * CELL_SIZE + PLAYER_BORDER,
                     p.getyPos() * CELL_SIZE + PLAYER_BORDER,
-                    color,
+                    new Color(130, 36, 36),
                     PLAYER_SIZE);
         }
+        Player p = this.superView.model.getCurrentPlayer();
+        this.paint(g,
+                p.getxPos() * CELL_SIZE + PLAYER_BORDER,
+                p.getyPos() * CELL_SIZE + PLAYER_BORDER,
+                Color.RED,
+                PLAYER_SIZE);
     }
 
 
